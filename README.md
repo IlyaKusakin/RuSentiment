@@ -1,7 +1,5 @@
 ### Datasets
-[From Corus](http://study.mokoron.com/)
-
-[RuSentiment](https://gitlab.com/kensand/rusentiment/tree/master/Dataset)
+[From Corus](http://study.mokoron.com/), [RuSentiment](https://gitlab.com/kensand/rusentiment/tree/master/Dataset)
 
 ### RuBERT model
 [rubert-base-cased](https://huggingface.co/DeepPavlov/rubert-base-cased)
