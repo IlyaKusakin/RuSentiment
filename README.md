@@ -7,7 +7,7 @@ https://gitlab.com/kensand/rusentiment/tree/master/Dataset
 https://huggingface.co/DeepPavlov/rubert-base-cased
 
 
-# Результаты
+# Results
 
 ## stock RuBERT:
 
