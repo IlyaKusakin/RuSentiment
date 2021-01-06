@@ -3,5 +3,5 @@ http://study.mokoron.com/
 
 https://gitlab.com/kensand/rusentiment/tree/master/Dataset
 
-### RuBERT model from
+### RuBERT model
 https://huggingface.co/DeepPavlov/rubert-base-cased
