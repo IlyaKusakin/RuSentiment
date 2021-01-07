@@ -4,7 +4,7 @@ import torch
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 bert_tokenizer = transformers.BertTokenizer.from_pretrained('DeepPavlov/rubert-base-cased')
-tuned_RuBERT = transformers.BertForSequenceClassification.from_pretrained(
+model = transformers.BertForSequenceClassification.from_pretrained(
     'DeepPavlov/rubert-base-cased', 
     output_attentions=True,
     pad_token_id=bert_tokenizer.eos_token_id,
@@ -13,7 +13,7 @@ tuned_RuBERT = transformers.BertForSequenceClassification.from_pretrained(
 ).to(device)
 
 weights_file = 'weights/tuned_RuBERT_common.pt'
-tuned_RuBERT.load_state_dict(torch.load(weights_file))
+model.load_state_dict(torch.load(weights_file))
 
 def filter_text(text):
     line = razdel.tokenize(text.lower())
@@ -42,9 +42,9 @@ def predict(texts):
 
     inputs = torch.tensor(inputs)
     mask = torch.tensor(mask)
-    tuned_RuBERT.eval()
+    model.eval()
     with torch.no_grad():
-      outputs = tuned_RuBERT(input_ids = inputs.to(device), attention_mask = mask.to(device))
+      outputs = model(input_ids = inputs.to(device), attention_mask = mask.to(device))
       probas = torch.nn.functional.softmax(outputs.logits, dim=-1)
 
     result = []
