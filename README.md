@@ -4,6 +4,8 @@
 ### RuBERT model
 [rubert-base-cased](https://huggingface.co/DeepPavlov/rubert-base-cased)
 
+[Package on Google Drive with weights and datasets](https://drive.google.com/drive/folders/1TZsdyYxAEU0Arrm-AQCFs-uNrXgznope?usp=sharing)
+
 
 # Results
 
