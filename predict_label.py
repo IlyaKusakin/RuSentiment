@@ -2,19 +2,6 @@ import razdel
 import transformers
 import torch
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-bert_tokenizer = transformers.BertTokenizer.from_pretrained('DeepPavlov/rubert-base-cased')
-model = transformers.BertForSequenceClassification.from_pretrained(
-    'DeepPavlov/rubert-base-cased', 
-    output_attentions=True,
-    pad_token_id=bert_tokenizer.eos_token_id,
-    num_labels=2,
-    return_dict = True
-).to(device)
-
-weights_file = 'weights/tuned_RuBERT_common.pt'
-model.load_state_dict(torch.load(weights_file))
-
 def filter_text(text):
     line = razdel.tokenize(text.lower())
     line = [token.text for token in line]
@@ -22,7 +9,8 @@ def filter_text(text):
         
     return filtered_line
 
-def sample_batch(text, tokenizer=bert_tokenizer, max_length=16):
+def sample_batch(text, max_length=16):
+    tokenizer = transformers.BertTokenizer.from_pretrained('DeepPavlov/rubert-base-cased')
     tokenizer_output = tokenizer.encode_plus(
             filter_text(text), max_length = max_length,
             return_tensors = 'pt', padding = 'max_length')
@@ -32,7 +20,7 @@ def sample_batch(text, tokenizer=bert_tokenizer, max_length=16):
             "mask": tokenizer_output['attention_mask'].squeeze(0)[:max_length],
            }
 
-def predict(texts):
+def predict(texts, model, device):
     inputs = []
     mask = []
     for text in texts:
@@ -53,10 +41,24 @@ def predict(texts):
     
     return result
 
-messages = ['черт я так устала не могу', 'ура я довольный и счастливый']
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+bert_tokenizer = transformers.BertTokenizer.from_pretrained('DeepPavlov/rubert-base-cased')
+tuned_RuBERT = transformers.BertForSequenceClassification.from_pretrained(
+        'DeepPavlov/rubert-base-cased', 
+        output_attentions=True,
+        pad_token_id=bert_tokenizer.eos_token_id,
+        num_labels=2,
+        return_dict = True
+        ).to(device)
 
-results = predict(messages)
+weights_file = 'weights/tuned_RuBERT_common.pt'
+tuned_RuBERT.load_state_dict(torch.load(weights_file))
+
+messages = ['черт я так устала не могу', 'ура я довольный и счастливый']
+results = predict(messages, tuned_RuBERT, device)
+
 for message, sentiment in zip(messages, results):
     # черт я так устала не могу -> {'negative': 0.985421359539032, 'positive': 0.014578700996935368}
-    # ура я довольный и счатсливый -> {'negative': 0.03474540263414383, 'positive': 0.9652546048164368}
+    # ура я довольный и счастливый -> {'negative': 0.015193315222859383, 'positive': 0.9848067164421082}
     print(message, '->', sentiment)
+
